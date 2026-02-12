@@ -1,3 +1,4 @@
+
     * {
       margin: 0;
       padding: 0;
@@ -76,7 +77,7 @@
       display: flex;
       justify-content: center;
       gap: 32px;
-      margin-bottom: 40px;
+      margin-bottom: 48px;  /* increased spacing after removing filter bar */
     }
 
     .stat-box {
@@ -100,37 +101,7 @@
       font-weight: 500;
     }
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 10px 20px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      border-radius: 100px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .filter-btn:hover {
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
-      border-color: var(--text-secondary);
-    }
-
-    .filter-btn.active {
-      background-color: var(--accent);
-      border-color: var(--accent);
-      color: white;
-    }
+    /* no filter controls – only images */
 
     .masonry-grid {
       columns: 4;
@@ -158,41 +129,14 @@
       box-shadow: 0 20px 30px -10px rgba(0,0,0,0.05);
     }
 
-    .masonry-item img,
-    .masonry-item video {
+    .masonry-item img {
       width: 100%;
       height: auto;
       display: block;
       background: #f5f5f5;
     }
 
-    .video-play-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(6px);
-      color: #1a1a1a;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      opacity: 0;
-      transition: opacity 0.2s;
-      z-index: 3;
-      pointer-events: none;
-      border: 0.5px solid rgba(0,0,0,0.05);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    }
-
-    .masonry-item:hover .video-play-icon {
-      opacity: 0.9;
-    }
-
+    /* image badge – always present */
     .media-badge {
       position: absolute;
       bottom: 14px;
@@ -263,7 +207,7 @@
       color: #b91c1c;
     }
 
-    /* ----- MODAL – LIGHT & AIRY, ARROW BUTTONS WITH LOADING STATES ----- */
+    /* ----- MODAL – LIGHT & AIRY, ONLY IMAGE, ARROWS WITH LOADING ----- */
     .modal {
       display: none;
       position: fixed;
@@ -510,38 +454,37 @@
       display: none;
     }
 
-footer {
-  text-align: center;
-  padding: 32px 0;
-  border-top: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 14px;
-}
+    footer {
+      text-align: center;
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
 
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-}
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
 
-.footer-links a {
-  text-decoration: none;
-  color: var(--text-secondary);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
+    .footer-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
 
-.footer-links a:hover {
-  color: var(--text-primary);
-}
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
 
-.footer-links span {
-  color: var(--text-secondary);
-  opacity: 0.4;
-}
-
+    .footer-links span {
+      color: var(--text-secondary);
+      opacity: 0.4;
+    }
 
     .toast {
       position: fixed;
@@ -588,3 +531,4 @@ footer {
       padding: 60px 20px;
       color: var(--text-secondary);
     }
+  
