@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Live it up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: -1px;
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: transparent;
+      border-top: 1px solid #555555;
+      border-bottom: 1px solid #555555;
+      border-left: 1px solid #555555;
+      border-right: none;
+    }
+
+    .box:first-child {
+      border-right: none;
+    }
+
+    .fill {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      transition: left 0.7s ease;
+    }
+
+    .fill img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <div id="desktop_container" class="hidden md:block fixed inset-0 z-10">
+    <div id="box_container" class="absolute top-0 right-0"></div>
+  </div>
+
+  <div class="min-h-screen flex items-center justify-start relative">
+    <div class="h-[70vh] w-full max-w-6xl px-6 flex flex-col gap-[40px] transform -translate-y-12 md:-translate-y-24 text-left">
+      <div class="text-gray-400 font-semibold leading-none text-[28vw] sm:text-[22vw] md:text-[14rem]">
+        Live<br>
+        it up!
+      </div>
+
+      <div class="text-gray-500 text-[9vw] sm:text-[7vw] md:text-4xl">
+        Crafted with <span class="text-red-500">♥</span> in SayoLabs, Haldwani
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (window.innerWidth >= 768) {
+
+      const rows = [7, 8, 6, 5, 6, 5, 6, 3];
+
+      const images = [
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im1",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im2",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im3",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im4",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im5",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im6",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im7",
+        "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/im8"
+      ];
+
+      const container = document.getElementById('box_container');
+      const timeouts = {};
+      const box_images = {};
+
+      function assign_random_image_to_box(box_id) {
+        const random_index = Math.floor(Math.random() * images.length);
+        box_images[box_id] = images[random_index];
+        return box_images[box_id];
+      }
+
+      function get_image_for_box(box_id) {
+        if (!box_images[box_id]) {
+          return assign_random_image_to_box(box_id);
+        }
+        return box_images[box_id];
+      }
+
+      for (let row_index = 0; row_index < rows.length; row_index++) {
+        const row_div = document.createElement('div');
+        row_div.className = 'row';
+
+        for (let box_index = 0; box_index < rows[row_index]; box_index++) {
+          const box_div = document.createElement('div');
+          box_div.className = 'box';
+          const box_id = `box-${row_index}-${box_index}`;
+          box_div.id = box_id;
+
+          assign_random_image_to_box(box_id);
+
+          const fill_div = document.createElement('div');
+          fill_div.className = 'fill';
+          fill_div.style.left = '-100%';
+
+          box_div.appendChild(fill_div);
+
+          box_div.addEventListener('mouseenter', function() {
+
+            const box_id = this.id;
+
+            if (timeouts[box_id]) {
+              clearTimeout(timeouts[box_id]);
+              delete timeouts[box_id];
+            }
+
+            const image_url = get_image_for_box(box_id);
+
+            const img = document.createElement('img');
+            img.src = image_url;
+            img.alt = "Image";
+
+            const fill = box_div.querySelector('.fill');
+
+            if (!fill.querySelector('img')) {
+              fill.appendChild(img);
+            }
+
+            fill.style.left = '0%';
+          });
+
+          box_div.addEventListener('mouseleave', function() {
+            const box_id = this.id;
+            const fill = this.querySelector('.fill');
+
+            if (timeouts[box_id]) {
+              clearTimeout(timeouts[box_id]);
+            }
+
+            timeouts[box_id] = setTimeout(function() {
+              if (fill) {
+                fill.style.left = '-100%';
+              }
+              delete timeouts[box_id];
+            }, 1000);
+          });
+
+          row_div.appendChild(box_div);
+        }
+
+        container.appendChild(row_div);
+      }
+
+      document.getElementById('desktop_container').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8" />-->
+<!--  <title>Live it up</title>-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
+<!--  <script src="https://cdn.tailwindcss.com"></script>-->
+<!--  <style>-->
+<!--    .row {-->
+<!--      display: flex;-->
+<!--      justify-content: flex-end;-->
+<!--      margin-bottom: -1px;-->
+<!--    }-->
+
+<!--    .box {-->
+<!--      width: 100px;-->
+<!--      height: 100px;-->
+<!--      position: relative;-->
+<!--      overflow: hidden;-->
+<!--      cursor: pointer;-->
+<!--      background: transparent;-->
+<!--      border-top: 1px solid #555555;-->
+<!--      border-bottom: 1px solid #555555;-->
+<!--      border-left: 1px solid #555555;-->
+<!--      border-right: none;-->
+<!--    }-->
+
+<!--    .box:first-child {-->
+<!--      border-right: none;-->
+<!--    }-->
+
+<!--    .fill {-->
+<!--      position: absolute;-->
+<!--      top: 0;-->
+<!--      left: -100%; /* Start off-screen to the left */-->
+<!--      width: 100%;-->
+<!--      height: 100%;-->
+<!--      transition: left 0.7s ease; /* Transition left property */-->
+<!--    }-->
+
+<!--    .fill img {-->
+<!--      width: 100%;-->
+<!--      height: 100%;-->
+<!--      object-fit: cover;-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+
+<!--<body class="bg-gray-100 min-h-screen">-->
+
+<!--  <div id="desktop_container" class="hidden md:block fixed inset-0 z-10">-->
+<!--    <div id="box_container" class="absolute top-0 right-0"></div>-->
+<!--  </div>-->
+
+<!--  <div class="min-h-screen flex items-center justify-start relative">-->
+<!--    <div-->
+<!--      class="-->
+<!--        h-[70vh]-->
+<!--        w-full-->
+<!--        max-w-6xl-->
+<!--        px-6-->
+<!--        flex-->
+<!--        flex-col-->
+<!--        gap-[40px]-->
+<!--        transform-->
+<!--        -translate-y-12-->
+<!--        md:-translate-y-24-->
+<!--        text-left-->
+<!--      "-->
+<!--    >-->
+<!--      <div-->
+<!--        class="-->
+<!--          text-gray-400-->
+<!--          font-semibold-->
+<!--          leading-none-->
+<!--          text-[28vw]-->
+<!--          sm:text-[22vw]-->
+<!--          md:text-[14rem]-->
+<!--        "-->
+<!--      >-->
+<!--        Live<br>-->
+<!--        it up!-->
+<!--      </div>-->
+
+<!--      <div-->
+<!--        class="-->
+<!--          text-gray-500-->
+<!--          text-[9vw]-->
+<!--          sm:text-[7vw]-->
+<!--          md:text-4xl-->
+<!--        "-->
+<!--      >-->
+<!--        Crafted with <span class="text-red-500">♥</span> in SayoLabs, Haldwani-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <script>-->
+<!--    if (window.innerWidth >= 768) {-->
+<!--      const rows = [7, 8,6,5,6, 5, 6, 3];-->
+
+<!--      const images = ["/im1.png","/im2.png","/im3.png","/im4.png","/im5.png","/im6.png","/im7.png","/im8.png"];-->
+
+<!--      const container = document.getElementById('box_container');-->
+
+<!--      const timeouts = {};-->
+
+<!--      const box_images = {};-->
+
+<!--      function assign_random_image_to_box(box_id) {-->
+<!--        const random_index = Math.floor(Math.random() * images.length);-->
+<!--        box_images[box_id] = images[random_index];-->
+<!--        return box_images[box_id];-->
+<!--      }-->
+
+<!--      function get_image_for_box(box_id) {-->
+<!--        if (!box_images[box_id]) {-->
+<!--          return assign_random_image_to_box(box_id);-->
+<!--        }-->
+<!--        return box_images[box_id];-->
+<!--      }-->
+
+<!--      for (let row_index = 0; row_index < rows.length; row_index++) {-->
+<!--        const row_div = document.createElement('div');-->
+<!--        row_div.className = 'row';-->
+
+<!--        for (let box_index = 0; box_index < rows[row_index]; box_index++) {-->
+<!--          const box_div = document.createElement('div');-->
+<!--          box_div.className = 'box';-->
+<!--          const box_id = `box-${row_index}-${box_index}`;-->
+<!--          box_div.id = box_id;-->
+
+<!--          assign_random_image_to_box(box_id);-->
+
+<!--          const fill_div = document.createElement('div');-->
+<!--          fill_div.className = 'fill';-->
+
+<!--          // Set initial position to -100% (off-screen to the left)-->
+<!--          fill_div.style.left = '-100%';-->
+
+<!--          box_div.appendChild(fill_div);-->
+
+<!--          box_div.addEventListener('mouseenter', function() {-->
+<!--            const box_id = this.id;-->
+
+<!--            if (timeouts[box_id]) {-->
+<!--              clearTimeout(timeouts[box_id]);-->
+<!--              delete timeouts[box_id];-->
+<!--            }-->
+
+<!--            const image_url = get_image_for_box(box_id);-->
+
+<!--            const img = document.createElement('img');-->
+<!--            img.src = image_url;-->
+<!--            img.alt = "Random image";-->
+
+<!--            const fill = box_div.querySelector('.fill');-->
+
+<!--            // Check if we need to add the image-->
+<!--            if (!fill.querySelector('img')) {-->
+<!--              fill.appendChild(img);-->
+<!--            }-->
+
+<!--            // Slide in from left to right: -100% → 0%-->
+<!--            fill.style.left = '0%';-->
+<!--          });-->
+
+<!--          box_div.addEventListener('mouseleave', function() {-->
+<!--            const box_id = this.id;-->
+<!--            const fill = this.querySelector('.fill');-->
+
+<!--            if (timeouts[box_id]) {-->
+<!--              clearTimeout(timeouts[box_id]);-->
+<!--            }-->
+
+<!--            timeouts[box_id] = setTimeout(function() {-->
+<!--              if (fill) {-->
+<!--                // Slide out from right to left: 0% → -100%-->
+<!--                fill.style.left = '-100%';-->
+<!--              }-->
+<!--              delete timeouts[box_id];-->
+<!--            }, 1000);-->
+<!--          });-->
+
+<!--          row_div.appendChild(box_div);-->
+<!--        }-->
+
+<!--        container.appendChild(row_div);-->
+<!--      }-->
+
+<!--      document.getElementById('desktop_container').classList.remove('hidden');-->
+<!--    }-->
+<!--  </script>-->
+<!--</body>-->
+<!--</html>-->
