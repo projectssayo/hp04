@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IMAGE GALLERY · arrow with loading feedback</title>
+  <title>IMAGE GALLERY </title>
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- Google Font: Inter -->
@@ -88,7 +88,7 @@
       display: flex;
       justify-content: center;
       gap: 32px;
-      margin-bottom: 40px;
+      margin-bottom: 48px;  /* increased spacing after removing filter bar */
     }
 
     .stat-box {
@@ -112,37 +112,7 @@
       font-weight: 500;
     }
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 48px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 10px 20px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      border-radius: 100px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .filter-btn:hover {
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
-      border-color: var(--text-secondary);
-    }
-
-    .filter-btn.active {
-      background-color: var(--accent);
-      border-color: var(--accent);
-      color: white;
-    }
+    /* no filter controls – only images */
 
     .masonry-grid {
       columns: 4;
@@ -581,8 +551,8 @@
         <i class="fas fa-images"></i>
         IMAGE GALLERY
       </div>
-      <h1>Kareri 2026</h1>
-      <p class="subtitle">Snow, rivers, roads and everything in between <br> where mountains met memories and every step became a story.</p>
+      <h1>Kareri 2026 </h1>
+      <p class="subtitle">Snow, rivers, roads and everything in between </p>
       <div class="stats">
         <div class="stat-box">
           <div class="stat-number" id="totalCount">0</div>
@@ -592,15 +562,11 @@
           <div class="stat-number" id="imageCount">0</div>
           <div class="stat-label">Images</div>
         </div>
-        <!-- video stat removed -->
+        <!-- video stat completely removed -->
       </div>
     </header>
 
-    <div class="controls">
-      <button class="filter-btn active" data-filter="all">All Images</button>
-      <button class="filter-btn" data-filter="image">Images</button>
-      <!-- video filter button removed -->
-    </div>
+    <!-- NO FILTER BUTTONS –  are displayed anyway -->
 
     <div class="masonry-grid" id="grid"></div>
     <footer>
@@ -621,8 +587,6 @@
     <div class="modal-wrapper">
       <div class="modal-media-container" style="position: relative;">
         <img id="mImg" class="modal-media" style="display: block;">
-        <!-- video element removed -->
-
         <!-- ARROW NAVIGATION with loading state -->
         <div class="nav-arrow-left" id="navPrev" title="Previous (←)">
           <i class="fas fa-chevron-left"></i>
@@ -656,13 +620,19 @@
   </div>
 
   <script>
-    // --- PURE IMAGE GALLERY – no video, no media options, all features intact ---
-    let mediaItems = [];
-    let currentFilter = 'all';
+    // ================================================================
+    // GALLERY –  (filtered from Cloudinary data)
+    // – fetches real data, keeps only items with "/image/upload/"
+    // – download adds correct extension based on blob type
+    // – filter buttons removed – all shown items are images
+    // ================================================================
+
+    // --- PURE IMAGE GALLERY – no video, no media options ---
+    let mediaItems = [];        // will contain only image objects
     let mediaToDelete = null;
 
     let currentModalIndex = -1;
-    let currentFilteredList = [];
+    let currentFilteredList = []; // simply mediaItems, no filter
 
     const grid = document.getElementById('grid');
     const modal = document.getElementById('modal');
@@ -675,12 +645,38 @@
     const passwordError = document.getElementById('passwordError');
     const totalCount = document.getElementById('totalCount');
     const imageCount = document.getElementById('imageCount');
-    const filterButtons = document.querySelectorAll('.filter-btn');
     const navPrev = document.getElementById('navPrev');
     const navNext = document.getElementById('navNext');
 
-    // no video detection – all items are images
+    // ---------- FALLBACK: real image entries from user's Cloudinary data ----------
+    const FALLBACK_IMAGES = [
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208091305",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208091305"
+      },
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208091328",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208091328"
+      },
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208091732",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208091732"
+      },
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208092447",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208092447"
+      },
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208092654",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208092654"
+      },
+      {
+        thumbnail: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto:low,w_400/IMG20260208092733",
+        high_quality: "https://res.cloudinary.com/dnssyb7hu/image/upload/c_scale,f_auto,q_auto,w_1280/IMG20260208092733"
+      }
+    ];
 
+    // ---------- stats update ----------
     function updateStats() {
       const total = mediaItems.length;
       totalCount.textContent = total;
@@ -695,6 +691,7 @@
       setTimeout(() => toast.remove(), 2600);
     }
 
+    // ---------- SHARE (copy link) ----------
     window.shareMedia = async function(url) {
       try {
         await navigator.clipboard.writeText(url);
@@ -710,13 +707,30 @@
       }
     };
 
+    // ---------- DOWNLOAD – with smart extension from blob type ----------
     window.downloadMedia = async function(url) {
       try {
         const response = await fetch(url);
         const blob = await response.blob();
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = url.split('/').pop().split('?')[0] || 'download';
+
+        // Extract base name from URL (last segment before query)
+        let baseName = url.split('/').pop().split('?')[0] || 'image';
+        // Remove any .trashed- prefix if present
+        baseName = baseName.replace(/^\.trashed-\d+-/, '');
+
+        // Determine extension from blob MIME type
+        let extension = '';
+        const mime = blob.type;
+        if (mime.includes('jpeg') || mime.includes('jpg')) extension = '.jpg';
+        else if (mime.includes('png')) extension = '.png';
+        else if (mime.includes('gif')) extension = '.gif';
+        else if (mime.includes('webp')) extension = '.webp';
+        else if (mime.includes('svg')) extension = '.svg';
+        else extension = ''; // let browser decide or no extension
+
+        a.download = baseName + extension;
         a.click();
         URL.revokeObjectURL(a.href);
         showToast('Download started');
@@ -725,6 +739,7 @@
       }
     };
 
+    // ---------- DELETE prompt (unchanged) ----------
     window.deleteMediaPrompt = function(url) {
       mediaToDelete = url;
       passwordModal.style.display = 'flex';
@@ -769,7 +784,7 @@
       mediaToDelete = null;
     }
 
-    // render only images, no video markup
+    // ---------- RENDER – , no filter logic ----------
     function render() {
       if (!mediaItems.length) {
         grid.innerHTML = `<div class="error-state"><i class="fas fa-images" style="color: #aaa;"></i><h3 style="margin-bottom: 12px; font-weight: 400;">No Images Found</h3><p style="color: #999;">Add some images to get started</p></div>`;
@@ -777,20 +792,8 @@
         return;
       }
 
-      // filter: all or image (both give same result, but keep filter logic for consistency)
-      let filtered = mediaItems;
-      if (currentFilter === 'image') {
-        filtered = mediaItems; // all are images, no change
-      }
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="error-state"><i class="fas fa-filter"></i><h3 style="margin-bottom: 12px; font-weight: 400;">No items match</h3><p>Try a different filter</p></div>`;
-        updateStats();
-        return;
-      }
-
       let html = '';
-      filtered.forEach((item) => {
+      mediaItems.forEach((item) => {
         const thumb = item.thumbnail;
         const high = item.high_quality;
 
@@ -820,12 +823,10 @@
       updateStats();
     }
 
-    // modal: only image
+    // ---------- MODAL: only image ----------
     function openModal(url) {
-      // filtered list based on current filter (all = same)
-      if (currentFilter === 'all') currentFilteredList = mediaItems.slice();
-      else currentFilteredList = mediaItems.slice(); // image filter = all images
-
+      // currentFilteredList is all images (no filter)
+      currentFilteredList = mediaItems.slice();
       currentModalIndex = currentFilteredList.findIndex(item => item.high_quality === url);
 
       modal.style.display = 'flex';
@@ -834,7 +835,7 @@
       mImg.src = url;
       mImg.style.display = 'block';
 
-      // update toolbar actions
+      // update toolbar actions for this image
       document.getElementById('modalShareBtn').onclick = (e) => { e.stopPropagation(); shareMedia(url); };
       document.getElementById('modalDownloadBtn').onclick = (e) => { e.stopPropagation(); downloadMedia(url); };
       document.getElementById('modalDeleteBtn').onclick = (e) => {
@@ -843,7 +844,7 @@
       };
     }
 
-    // navigate with loading feedback on arrows (images only)
+    // ---------- NAVIGATE with loading arrows ----------
     function navigateModal(direction) {
       if (currentFilteredList.length === 0 || currentModalIndex === -1) return;
 
@@ -892,47 +893,40 @@
       navNext.classList.remove('loading');
     }
 
-    function setFilter(filter) {
-      currentFilter = filter;
-      filterButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.filter === filter);
-      });
-      render();
-    }
-
-    // load pure image collection – no video entries
+    // ---------- LOAD REAL DATA, FILTER  ----------
     async function loadMedia() {
       grid.innerHTML = `<div class="loading"><div class="loading-spinner"></div><p style="color: #999;">Loading images...</p></div>`;
-
-      // pure image mock collection – all high-quality pexels, no videos
-      const imageCollection = [
-        { thumbnail: 'https://images.pexels.com/photos/2178179/pexels-photo-2178179.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop', high_quality: 'https://images.pexels.com/photos/2178179/pexels-photo-2178179.jpeg?auto=compress&cs=tinysrgb&w=1600' },
-        { thumbnail: 'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&fit=crop', high_quality: 'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=1600' },
-        { thumbnail: 'https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop', high_quality: 'https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&cs=tinysrgb&w=1600' },
-        { thumbnail: 'https://images.pexels.com/photos/2553791/pexels-photo-2553791.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop', high_quality: 'https://images.pexels.com/photos/2553791/pexels-photo-2553791.jpeg?auto=compress&cs=tinysrgb&w=1600' },
-        { thumbnail: 'https://images.pexels.com/photos/257840/pexels-photo-257840.jpeg?auto=compress&cs=tinysrgb&w=400&h=600&fit=crop', high_quality: 'https://images.pexels.com/photos/257840/pexels-photo-257840.jpeg?auto=compress&cs=tinysrgb&w=1600' },
-        { thumbnail: 'https://images.pexels.com/photos/361104/pexels-photo-361104.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop', high_quality: 'https://images.pexels.com/photos/361104/pexels-photo-361104.jpeg?auto=compress&cs=tinysrgb&w=1600' }
-      ];
 
       try {
         const res = await fetch('/api/media');
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length && data[0].thumbnail && data[0].high_quality) {
-            mediaItems = data;
+          if (Array.isArray(data)) {
+            // STRICT FILTER: keep only items where high_quality contains "/image/upload/"
+            mediaItems = data.filter(item =>
+              item.high_quality && item.high_quality.includes('/image/upload/')
+            );
           } else {
-            mediaItems = imageCollection;
+            mediaItems = [];
           }
         } else {
-          mediaItems = imageCollection;
+          // fallback to real Cloudinary image entries (no pexels, no videos)
+          mediaItems = [...FALLBACK_IMAGES];
         }
-      } catch {
-        mediaItems = imageCollection;
+      } catch (error) {
+        console.warn('Fetch failed, using fallback image set', error);
+        mediaItems = [...FALLBACK_IMAGES];
       }
+
+      // If after all we have zero items, keep fallback
+      if (mediaItems.length === 0) {
+        mediaItems = [...FALLBACK_IMAGES];
+      }
+
       render();
     }
 
-    // event listeners
+    // ---------- EVENT LISTENERS ----------
     closeModalBtn.addEventListener('click', closeModalFunc);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModalFunc(); });
 
@@ -959,10 +953,7 @@
       }
     });
 
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => setFilter(btn.dataset.filter));
-    });
-
+    // START
     loadMedia();
   </script>
 </body>
