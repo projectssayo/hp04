@@ -9,7 +9,7 @@ const __dirname = dirname(__filename)
 
 const app = express()
 const PORT = 8000
-const ADMIN_PASSWORD = "ghapaghap"
+const ADMIN_PASSWORD = "anvaya4$"
 const DATA_FILE = join(__dirname, "media.json")
 
 app.use(cors())
